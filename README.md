@@ -1,0 +1,2 @@
+# LineBotTemplate
+LINEのBotを作る際に必要な機能を一通り用意したテンプレートリポジトリ
