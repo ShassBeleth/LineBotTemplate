@@ -6,7 +6,7 @@
 			/// メッセージ
 			/// </summary>
 			public partial class Message {
-				
+
 				/// <summary>
 				/// メッセージID
 				/// </summary>
@@ -45,12 +45,12 @@
 				/// <summary>
 				/// 緯度
 				/// </summary>
-				public double latitude;
+				public double? latitude;
 
 				/// <summary>
 				/// 経度
 				/// </summary>
-				public double longitude;
+				public double? longitude;
 
 				/// <summary>
 				/// パッケージ識別子
