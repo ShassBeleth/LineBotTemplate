@@ -36,7 +36,7 @@ namespace LineBotTemplate.Controllers {
 					: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
 					: null;
 				if( sourceId == null ) {
-					Trace.TraceError( "Error : Source Id Not Found" );
+					Trace.TraceError( "Source Id Not Found" );
 					break;
 				}
 
@@ -136,7 +136,7 @@ namespace LineBotTemplate.Controllers {
 							case RequestOfWebhook.Event.Message.MessageType.Location: {
 
 									if( !eventObj.message.latitude.HasValue || !eventObj.message.longitude.HasValue ) {
-										Trace.TraceError( "Error : Not Found Latitude Or Longitude" );
+										Trace.TraceError( "Not Found Latitude Or Longitude" );
 										break;
 									}
 
@@ -170,7 +170,7 @@ namespace LineBotTemplate.Controllers {
 
 							// 想定外のメッセージ種別の場合は何もしない
 							default:
-								Trace.TraceError( "Error : Unexpected Message Type" );
+								Trace.TraceError( "Unexpected Message Type" );
 								break;
 
 						}
@@ -204,7 +204,7 @@ namespace LineBotTemplate.Controllers {
 
 					// 想定外のイベント種別の場合は何もしない
 					default:
-						Trace.TraceError( "Error : Unexpected Type" );
+						Trace.TraceError( "Unexpected Type" );
 						break;
 
 				}
