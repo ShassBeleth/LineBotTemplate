@@ -26,8 +26,20 @@ namespace LineBotTemplate.Controllers {
 			// リクエストトークンをオブジェクトに詰める
 			Trace.TraceInformation( "Request Token is : " + requestToken );
 			RequestOfWebhook request = requestToken.ToObject<RequestOfWebhook>();
-			
+
 			foreach( RequestOfWebhook.Event eventObj in request.events ) {
+
+				// 送信元IDの取得
+				string sourceId
+					= eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.User ? eventObj.source.userId
+					: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Group ? eventObj.source.groupId
+					: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
+					: null;
+				if( sourceId == null ) {
+					Trace.TraceError( "Error : Source Id Not Found" );
+					break;
+				}
+
 
 				switch( eventObj.type ) {
 
@@ -35,29 +47,14 @@ namespace LineBotTemplate.Controllers {
 					case RequestOfWebhook.Event.EventType.Follow:
 
 					// グループまたはトークルームに追加
-					case RequestOfWebhook.Event.EventType.Join: 
-						{
-
-							string id
-								= eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.User ? eventObj.source.userId 
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Group ? eventObj.source.groupId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
-								: null;
-
-							if( id == null ) {
-								Trace.TraceError( "Error : Source Id Not Found" );
-								break;
-							}
-							
-							this.ExecuteJoinEvent(
-								eventObj.replyToken ,
-								eventObj.timestamp ,
-								eventObj.source.type ,
-								id
-							);
-							break;
-
-						}
+					case RequestOfWebhook.Event.EventType.Join:
+						this.ExecuteJoinEvent(
+							eventObj.replyToken ,
+							eventObj.timestamp ,
+							eventObj.source.type ,
+							sourceId
+						);
+						break;
 
 					// ブロック
 					case RequestOfWebhook.Event.EventType.Unfollow:
@@ -72,181 +69,149 @@ namespace LineBotTemplate.Controllers {
 						break;
 
 					// メッセージ
-					case RequestOfWebhook.Event.EventType.Message: 
-						{
+					case RequestOfWebhook.Event.EventType.Message:
 
-							string id
-								= eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.User ? eventObj.source.userId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Group ? eventObj.source.groupId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
-								: null;
+						switch( eventObj.message.type ) {
 
-							if( id == null ) {
-								Trace.TraceError( "Error : Not Found Source Id" );
+							// テキスト
+							case RequestOfWebhook.Event.Message.MessageType.Text:
+								this.ExecuteTextMessageEvent(
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id ,
+									eventObj.message.text
+								);
 								break;
-							}
 
-							switch( eventObj.message.type ) {
+							// 画像
+							case RequestOfWebhook.Event.Message.MessageType.Image:
+								this.ExecuteImageMessageEvent(
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id
+								);
+								break;
 
-								// テキスト
-								case RequestOfWebhook.Event.Message.MessageType.Text:
-									this.ExecuteTextMessageEvent(
-										eventObj.replyToken ,
-										eventObj.timestamp ,
-										eventObj.source.type ,
-										id ,
-										eventObj.message.id ,
-										eventObj.message.text
-									);
-									break;
+							// 動画
+							case RequestOfWebhook.Event.Message.MessageType.Video:
+								this.ExecuteVideoMessageEvent(
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id
+								);
+								break;
 
-								// 画像
-								case RequestOfWebhook.Event.Message.MessageType.Image:
-									this.ExecuteImageMessageEvent(
-										eventObj.replyToken ,
-										eventObj.timestamp ,
-										eventObj.source.type ,
-										id ,
-										eventObj.message.id
-									);
-									break;
+							// 音声
+							case RequestOfWebhook.Event.Message.MessageType.Audio:
+								this.ExecuteAudioMessageEvent(
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id
+								);
 
-								// 動画
-								case RequestOfWebhook.Event.Message.MessageType.Video:
-									this.ExecuteVideoMessageEvent(
-										eventObj.replyToken ,
-										eventObj.timestamp ,
-										eventObj.source.type ,
-										id ,
-										eventObj.message.id
-									);
-									break;
+								break;
 
-								// 音声
-								case RequestOfWebhook.Event.Message.MessageType.Audio:
-									this.ExecuteAudioMessageEvent(
-										eventObj.replyToken ,
-										eventObj.timestamp ,
-										eventObj.source.type ,
-										id ,
-										eventObj.message.id
-									);
+							// ファイル
+							case RequestOfWebhook.Event.Message.MessageType.File:
+								this.ExecuteFileMessageEvent(
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id ,
+									eventObj.message.fileName ,
+									eventObj.message.fileSize
+								);
+								break;
 
-									break;
+							// 位置情報
+							case RequestOfWebhook.Event.Message.MessageType.Location: {
 
-								// ファイル
-								case RequestOfWebhook.Event.Message.MessageType.File:
-									this.ExecuteFileMessageEvent(
-										eventObj.replyToken ,
-										eventObj.timestamp ,
-										eventObj.source.type ,
-										id ,
-										eventObj.message.id ,
-										eventObj.message.fileName ,
-										eventObj.message.fileSize
-									);
-									break;
-
-								// 位置情報
-								case RequestOfWebhook.Event.Message.MessageType.Location: {
-
-										if( !eventObj.message.latitude.HasValue || !eventObj.message.longitude.HasValue ) {
-											Trace.TraceError( "Error : Not Found Latitude Or Longitude" );
-											break;
-										}
-										
-										this.ExecuteLocationMessageEvent(
-											eventObj.replyToken ,
-											eventObj.timestamp ,
-											eventObj.source.type ,
-											id ,
-											eventObj.message.id ,
-											eventObj.message.title ,
-											eventObj.message.address ,
-											eventObj.message.latitude.Value ,
-											eventObj.message.longitude.Value
-										);
+									if( !eventObj.message.latitude.HasValue || !eventObj.message.longitude.HasValue ) {
+										Trace.TraceError( "Error : Not Found Latitude Or Longitude" );
 										break;
-
 									}
 
-								// Sticker
-								case RequestOfWebhook.Event.Message.MessageType.Sticker:
-									this.ExecuteStickerMessageEvent(
+									this.ExecuteLocationMessageEvent(
 										eventObj.replyToken ,
 										eventObj.timestamp ,
 										eventObj.source.type ,
-										id ,
+										sourceId ,
 										eventObj.message.id ,
-										eventObj.message.packageId ,
-										eventObj.message.stickerId
+										eventObj.message.title ,
+										eventObj.message.address ,
+										eventObj.message.latitude.Value ,
+										eventObj.message.longitude.Value
 									);
 									break;
 
-								// 想定外のメッセージ種別の場合は何もしない
-								default:
-									Trace.TraceError( "Error : Unexpected Message Type" );
-									break;
+								}
 
-							}
+							// Sticker
+							case RequestOfWebhook.Event.Message.MessageType.Sticker:
+								this.ExecuteStickerMessageEvent(
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id ,
+									eventObj.message.packageId ,
+									eventObj.message.stickerId
+								);
+								break;
 
-							break;
+							// 想定外のメッセージ種別の場合は何もしない
+							default:
+								Trace.TraceError( "Error : Unexpected Message Type" );
+								break;
 
 						}
+
+						break;
 
 					// ポストバック
-					case RequestOfWebhook.Event.EventType.Postback: 
-						{
-
-							string id
-								= eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.User ? eventObj.source.userId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Group ? eventObj.source.groupId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
-								: null;
-
-							this.ExecutePostbackEvent(
-								eventObj.replyToken ,
-								eventObj.timestamp ,
-								eventObj.source.type ,
-								id ,
-								eventObj.postback.data
-							);
-							break;
-						}
+					case RequestOfWebhook.Event.EventType.Postback:
+						this.ExecutePostbackEvent(
+							eventObj.replyToken ,
+							eventObj.timestamp ,
+							eventObj.source.type ,
+							sourceId ,
+							eventObj.postback.data
+						);
+						break;
 
 					// ビーコン
-					case RequestOfWebhook.Event.EventType.Beacon: 
-						{
+					case RequestOfWebhook.Event.EventType.Beacon:
+						this.ExecuteBeaconEvent(
+							eventObj.replyToken ,
+							eventObj.timestamp ,
+							eventObj.source.type ,
+							sourceId ,
+							eventObj.beacon.hwid ,
+							eventObj.beacon.type ,
+							eventObj.beacon.dm
+						);
 
-							string id
-								= eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.User ? eventObj.source.userId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Group ? eventObj.source.groupId
-								: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
-								: null;
+						break;
 
-							this.ExecuteBeaconEvent(
-								eventObj.replyToken ,
-								eventObj.timestamp ,
-								eventObj.source.type ,
-								id ,
-								eventObj.beacon.hwid ,
-								eventObj.beacon.type ,
-								eventObj.beacon.dm 
-							);
-
-							break;
-						}
-						
 					// 想定外のイベント種別の場合は何もしない
-					default :
+					default:
 						Trace.TraceError( "Error : Unexpected Type" );
 						break;
 
 				}
-				
+
 			}
 
-			Trace.TraceInformation( "Webhook API End" );			
+			Trace.TraceInformation( "Webhook API End" );
 			return new HttpResponseMessage( HttpStatusCode.OK );
 
 		}
@@ -294,7 +259,7 @@ namespace LineBotTemplate.Controllers {
 			Trace.TraceInformation( "Leave Event End" );
 
 		}
-		
+
 		/// <summary>
 		/// テキストメッセージイベント
 		/// </summary>
@@ -354,7 +319,7 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="sourceId">イベント送信元ID</param>
 		/// <param name="messageId">メッセージ識別子</param>
 		private void ExecuteVideoMessageEvent(
-			string 	replyToken ,
+			string replyToken ,
 			int timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
@@ -480,7 +445,7 @@ namespace LineBotTemplate.Controllers {
 			Trace.TraceInformation( "Sticker Message Event End" );
 
 		}
-		
+
 		/// <summary>
 		/// ポストバック送信時イベント
 		/// </summary>
@@ -517,13 +482,13 @@ namespace LineBotTemplate.Controllers {
 			RequestOfWebhook.Event.Beacon.BeaconType beaconType ,
 			string deviceMessage
 		) {
-			
+
 			Trace.TraceInformation( "Beacon Event Start" );
 
 			// ここにイベント内容を記載
 
 			Trace.TraceInformation( "Beacon Event End" );
-			
+
 		}
 
 	}
