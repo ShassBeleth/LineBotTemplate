@@ -89,6 +89,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.BaseSize.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.ImageMapAction.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.ImageMapAction.ImageMapActionType.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.ImageMapAction.ImageMapArea.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.MessageType.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Beacon.BeaconType.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Beacon.cs" />
@@ -100,6 +107,8 @@
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Source.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Source.SourceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ContentService.cs" />
+    <Compile Include="Services\ReplyMessageService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

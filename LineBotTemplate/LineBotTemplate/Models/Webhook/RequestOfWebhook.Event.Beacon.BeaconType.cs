@@ -1,8 +1,8 @@
 ﻿namespace LineBotTemplate.Models.Webhook {
 	public partial class RequestOfWebhook {
 		public partial class Event {
-
 			public partial class Beacon {
+
 				/// <summary>
 				/// ビーコン種別
 				/// </summary>
