@@ -482,16 +482,56 @@ namespace LineBotTemplate.Services {
 			client.DefaultRequestHeaders.Add( "Authorization" , "Bearer {" + this.ChannelAccessToken + "}" );
 
 			try {
+
 				HttpResponseMessage response = await client.PostAsync( "https://api.line.me/v2/bot/message/reply" , content );
-				string result = await response.Content.ReadAsStringAsync();
-				Trace.TraceInformation( "Reply Message Status Code is : " + response.StatusCode );
+
+				switch( response.StatusCode ) {
+
+					// 200 リクエスト成功
+					case System.Net.HttpStatusCode.OK:
+						string result = await response.Content.ReadAsStringAsync();
+						Trace.TraceInformation( "Status is : 200" );
+						break;
+
+					// 400 パラメータ誤り
+					case System.Net.HttpStatusCode.BadRequest:
+						Trace.TraceError( "Status is : 400 Bad Request" );
+						break;
+
+					// 401 権限ヘッダが正しくない
+					case System.Net.HttpStatusCode.Unauthorized:
+						Trace.TraceError( "Status is : 401 Unauthorized" );
+						break;
+
+					// 403 APIの利用権限がない
+					case System.Net.HttpStatusCode.Forbidden:
+						Trace.TraceError( "Status is : 403 Forbidden" );
+						break;
+
+					// 500 APIサーバ側のエラー
+					case System.Net.HttpStatusCode.InternalServerError:
+						Trace.TraceError( "Status is : 500 Internal Server Error" );
+						break;
+
+					default:
+
+						// 429 アクセス頻度制限越え
+						if( (int)response.StatusCode == 429 ) {
+							Trace.TraceError( "Status is : 429 Too Many Requests" );
+						}
+						// その他エラー
+						else {
+							Trace.TraceError( "Status is not 200" );
+							throw new Exception();
+						}
+						break;
+
+				}
+
 				response.Dispose();
 			}
 			catch( ArgumentNullException e ) {
 				Trace.TraceError( "Reply Message Send Argument Null Exception " + e.Message );
-			}
-			catch( HttpRequestException e ) {
-				Trace.TraceError( "Reply Message Send Http Request Exception " + e.Message );
 			}
 			catch( Exception e ) {
 				Trace.TraceError( "Reply Message Send 予期せぬ例外 " + e.Message );

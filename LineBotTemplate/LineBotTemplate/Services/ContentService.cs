@@ -33,18 +33,55 @@ namespace LineBotTemplate.Services {
 			byte[] result = null;
 			try {
 				HttpResponseMessage response = await client.GetAsync( "https://api.line.me/v2/bot/message/" + messageId + "/content" );
-				result = await response.Content.ReadAsByteArrayAsync();
+				switch( response.StatusCode ) {
+
+					// 200 リクエスト成功
+					case System.Net.HttpStatusCode.OK:
+						result = await response.Content.ReadAsByteArrayAsync();
+						Trace.TraceInformation( "Get Binary Image is : " + result != null ? "SUCCESS" : "FAILED" );
+						break;
+
+					// 400 パラメータ誤り
+					case System.Net.HttpStatusCode.BadRequest:
+						Trace.TraceError( "Status is : 400 Bad Request" );
+						break;
+
+					// 401 権限ヘッダが正しくない
+					case System.Net.HttpStatusCode.Unauthorized:
+						Trace.TraceError( "Status is : 401 Unauthorized" );
+						break;
+
+					// 403 APIの利用権限がない
+					case System.Net.HttpStatusCode.Forbidden:
+						Trace.TraceError( "Status is : 403 Forbidden" );
+						break;
+						
+					// 500 APIサーバ側のエラー
+					case System.Net.HttpStatusCode.InternalServerError:
+						Trace.TraceError( "Status is : 500 Internal Server Error" );
+						break;
+
+					default:
+
+						// 429 アクセス頻度制限越え
+						if( (int)response.StatusCode == 429 ) {
+							Trace.TraceError( "Status is : 429 Too Many Requests" );
+						}
+						// その他エラー
+						else {
+							Trace.TraceError( "Status is not 200" );
+							throw new Exception();
+						}
+						break;
+
+				}
+				
 				response.Dispose();
 				client.Dispose();
-				Trace.TraceInformation( "Get Binary Image is : " + result != null ? "SUCCESS" : "FAILED" );
+				
 			}
 			catch( ArgumentNullException e ) {
 				Trace.TraceError( "Get Content Argument Null Exception : " + e.Message );
-				client.Dispose();
-				result = null;
-			}
-			catch( HttpRequestException e ) {
-				Trace.TraceError( "Get Content Http Request Exception : " + e.Message );
 				client.Dispose();
 				result = null;
 			}
