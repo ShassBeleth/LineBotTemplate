@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using Newtonsoft.Json.Linq;
 using LineBotTemplate.Models.Webhook;
-using System;
+using LineBotTemplate.Services;
 
 namespace LineBotTemplate.Controllers {
 
@@ -19,13 +19,16 @@ namespace LineBotTemplate.Controllers {
 		/// </summary>
 		/// <param name="requestToken">リクエストトークン</param>
 		/// <returns>常にステータス200のみを返す</returns>
-		public HttpResponseMessage Post( JToken requestToken ) {
+		public async Task<HttpResponseMessage> Post( JToken requestToken ) {
 
 			Trace.TraceInformation( "Webhook API Start" );
 
 			// リクエストトークンをオブジェクトに詰める
 			Trace.TraceInformation( "Request Token is : " + requestToken );
 			RequestOfWebhook request = requestToken.ToObject<RequestOfWebhook>();
+
+			// TODO チャンネルアクセストークンの取得
+			string channelAccessToken = "";
 
 			foreach( RequestOfWebhook.Event eventObj in request.events ) {
 
@@ -92,7 +95,8 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id
+									eventObj.message.id ,
+									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 								break;
 
@@ -103,7 +107,8 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id
+									eventObj.message.id ,
+									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 								break;
 
@@ -114,7 +119,8 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id
+									eventObj.message.id ,
+									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 
 								break;
@@ -128,7 +134,8 @@ namespace LineBotTemplate.Controllers {
 									sourceId ,
 									eventObj.message.id ,
 									eventObj.message.fileName ,
-									eventObj.message.fileSize
+									eventObj.message.fileSize ,
+									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 								break;
 
@@ -294,12 +301,14 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
 		/// <param name="messageId">メッセージ識別子</param>
+		/// <param name="binaryImage">バイナリ画像</param>
 		private void ExecuteImageMessageEvent(
 			string replyToken ,
 			int timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId
+			string messageId ,
+			byte[] binaryImage
 		) {
 
 			Trace.TraceInformation( "Image Message Event Start" );
@@ -318,12 +327,14 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
 		/// <param name="messageId">メッセージ識別子</param>
+		/// <param name="binaryVideo">バイナリ動画</param>
 		private void ExecuteVideoMessageEvent(
 			string replyToken ,
 			int timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId
+			string messageId ,
+			byte[] binaryVideo
 		) {
 
 			Trace.TraceInformation( "Video Message Event Start" );
@@ -342,12 +353,14 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
 		/// <param name="messageId">メッセージ識別子</param>
+		/// <param name="binaryAudio">バイナリ音声</param>
 		private void ExecuteAudioMessageEvent(
 			string replyToken ,
 			int timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId
+			string messageId ,
+			byte[] binaryAudio
 		) {
 
 			Trace.TraceInformation( "Audio Message Event Start" );
@@ -368,6 +381,7 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="fileName">ファイル名</param>
 		/// <param name="fileSize">ファイルのバイト数</param>
+		/// <param name="binaryFile">バイナリファイル</param>
 		private void ExecuteFileMessageEvent(
 			string replyToken ,
 			int timestamp ,
@@ -375,7 +389,8 @@ namespace LineBotTemplate.Controllers {
 			string sourceId ,
 			string messageId ,
 			string fileName ,
-			string fileSize
+			string fileSize ,
+			byte[] binaryFile
 		) {
 
 			Trace.TraceInformation( "File Message Event Start" );
