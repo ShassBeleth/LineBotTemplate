@@ -79,7 +79,7 @@
 			/// <summary>
 			/// imagemapタップ時のアクション
 			/// </summary>
-			public ImageMapAction action;
+			public ImageMapAction[] actions;
 
 			/// <summary>
 			/// テンプレートオブジェクト

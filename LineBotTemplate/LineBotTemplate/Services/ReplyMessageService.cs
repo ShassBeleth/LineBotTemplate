@@ -305,7 +305,60 @@ namespace LineBotTemplate.Services {
 
 		}
 
-		// TODO Imagemapについて
+		/// <summary>
+		/// リンク付き画像コンテンツを送信リストに追加する
+		/// 初回以外は配列を拡大させながら追加する
+		/// 5通目以降は追加されない
+		/// </summary>
+		/// <param name="baseUrl">画像のURL</param>
+		/// <param name="altText">代替テキスト</param>
+		/// <param name="width">幅</param>
+		/// <param name="height">高さ</param>
+		/// <param name="actions">タップ時のアクション</param>
+		/// <returns>自身のオブジェクト</returns>
+		public ReplyMessageService AddImagemapMessage(
+			string baseUrl ,
+			string altText ,
+			int width ,
+			int height ,
+			RequestOfReplyMessage.Message.ImageMapAction[] actions
+		) {
+
+			Trace.TraceInformation( "Add Imagemap Message Start" );
+			Trace.TraceInformation( "Base Url is : " + baseUrl );
+			Trace.TraceInformation( "Alt Text is : " + altText );
+			Trace.TraceInformation( "Width is : " + width );
+			Trace.TraceInformation( "Height is : " + height );
+			Trace.TraceInformation( "Action Length is : " + actions.Length );
+			
+			if( this.MessagesIndex == this.MaxIndex ) {
+				Trace.TraceWarning( "Message Index == Max Index" );
+				Trace.TraceInformation( "Add Sticker Message End" );
+				return this;
+			}
+
+			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
+			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
+
+			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
+				type = RequestOfReplyMessage.Message.MessageType.Imagemap ,
+				baseUrl = baseUrl ,
+				altText = altText ,
+				baseSize = new RequestOfReplyMessage.Message.BaseSize() {
+					width = width ,
+					height = height
+				} ,
+				actions = actions
+			};
+
+			this.Request.messages[ this.MessagesIndex ] = message;
+			this.MessagesIndex++;
+
+			Trace.TraceInformation( "Add Sticker Message End" );
+
+			return this;
+
+		}
 
 		/// <summary>
 		/// 画像、タイトル、テキスト、複数のアクションボタンを組み合わせたテンプレートメッセージを送信リストに追加する
