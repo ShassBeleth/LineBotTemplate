@@ -30,13 +30,13 @@ namespace LineBotTemplate.Controllers {
 			// TODO チャンネルアクセストークンの取得
 			string channelAccessToken = "";
 
-			foreach( RequestOfWebhook.Event eventObj in request.events ) {
+			foreach( Event eventObj in request.events ) {
 
 				// 送信元IDの取得
 				string sourceId
-					= eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.User ? eventObj.source.userId
-					: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Group ? eventObj.source.groupId
-					: eventObj.source.type == RequestOfWebhook.Event.Source.SourceType.Room ? eventObj.source.roomId
+					= eventObj.source.type.Equals( "user" ) ? eventObj.source.userId
+					: eventObj.source.type.Equals( "group" ) ? eventObj.source.groupId
+					: eventObj.source.type.Equals( "room" ) ? eventObj.source.roomId
 					: null;
 				if( sourceId == null ) {
 					Trace.TraceError( "Source Id Not Found" );
@@ -47,10 +47,10 @@ namespace LineBotTemplate.Controllers {
 				switch( eventObj.type ) {
 
 					// 友達追加またはブロック解除
-					case RequestOfWebhook.Event.EventType.Follow:
+					case "follow":
 
 					// グループまたはトークルームに追加
-					case RequestOfWebhook.Event.EventType.Join:
+					case "join":
 						await this.ExecuteJoinEvent(
 							channelAccessToken ,
 							eventObj.replyToken ,
@@ -61,10 +61,10 @@ namespace LineBotTemplate.Controllers {
 						break;
 
 					// ブロック
-					case RequestOfWebhook.Event.EventType.Unfollow:
+					case "unfollow":
 
 					// グループから退出させられる
-					case RequestOfWebhook.Event.EventType.Leave:
+					case "leave":
 						this.ExecuteLeaveEvent(
 							channelAccessToken ,
 							eventObj.timestamp ,
@@ -74,12 +74,12 @@ namespace LineBotTemplate.Controllers {
 						break;
 
 					// メッセージ
-					case RequestOfWebhook.Event.EventType.Message:
+					case "message":
 
 						switch( eventObj.message.type ) {
 
 							// テキスト
-							case RequestOfWebhook.Event.Message.MessageType.Text:
+							case "text":
 								await this.ExecuteTextMessageEvent(
 									channelAccessToken ,
 									eventObj.replyToken ,
@@ -92,7 +92,7 @@ namespace LineBotTemplate.Controllers {
 								break;
 
 							// 画像
-							case RequestOfWebhook.Event.Message.MessageType.Image:
+							case "image":
 								await this.ExecuteImageMessageEvent(
 									channelAccessToken ,
 									eventObj.replyToken ,
@@ -105,7 +105,7 @@ namespace LineBotTemplate.Controllers {
 								break;
 
 							// 動画
-							case RequestOfWebhook.Event.Message.MessageType.Video:
+							case "video":
 								await this.ExecuteVideoMessageEvent(
 									channelAccessToken ,
 									eventObj.replyToken ,
@@ -118,7 +118,7 @@ namespace LineBotTemplate.Controllers {
 								break;
 
 							// 音声
-							case RequestOfWebhook.Event.Message.MessageType.Audio:
+							case "audio":
 								await this.ExecuteAudioMessageEvent(
 									channelAccessToken ,
 									eventObj.replyToken ,
@@ -132,7 +132,7 @@ namespace LineBotTemplate.Controllers {
 								break;
 
 							// ファイル
-							case RequestOfWebhook.Event.Message.MessageType.File:
+							case "file":
 								await this.ExecuteFileMessageEvent(
 									channelAccessToken ,
 									eventObj.replyToken ,
@@ -147,31 +147,29 @@ namespace LineBotTemplate.Controllers {
 								break;
 
 							// 位置情報
-							case RequestOfWebhook.Event.Message.MessageType.Location: {
+							case "location":
 
-									if( !eventObj.message.latitude.HasValue || !eventObj.message.longitude.HasValue ) {
-										Trace.TraceError( "Not Found Latitude Or Longitude" );
-										break;
-									}
-
-									await this.ExecuteLocationMessageEvent(
-										channelAccessToken ,
-										eventObj.replyToken ,
-										eventObj.timestamp ,
-										eventObj.source.type ,
-										sourceId ,
-										eventObj.message.id ,
-										eventObj.message.title ,
-										eventObj.message.address ,
-										eventObj.message.latitude.Value ,
-										eventObj.message.longitude.Value
-									);
+								if( eventObj.message.latitude == null || eventObj.message.longitude == null ) {
+									Trace.TraceError( "Not Found Latitude Or Longitude" );
 									break;
-
 								}
 
+								await this.ExecuteLocationMessageEvent(
+									channelAccessToken ,
+									eventObj.replyToken ,
+									eventObj.timestamp ,
+									eventObj.source.type ,
+									sourceId ,
+									eventObj.message.id ,
+									eventObj.message.title ,
+									eventObj.message.address ,
+									eventObj.message.latitude ,
+									eventObj.message.longitude
+								);
+								break;
+								
 							// Sticker
-							case RequestOfWebhook.Event.Message.MessageType.Sticker:
+							case "sticker":
 								await this.ExecuteStickerMessageEvent(
 									channelAccessToken ,
 									eventObj.replyToken ,
@@ -194,7 +192,7 @@ namespace LineBotTemplate.Controllers {
 						break;
 
 					// ポストバック
-					case RequestOfWebhook.Event.EventType.Postback:
+					case "postback":
 						await this.ExecutePostbackEvent(
 							channelAccessToken ,
 							eventObj.replyToken ,
@@ -206,7 +204,7 @@ namespace LineBotTemplate.Controllers {
 						break;
 
 					// ビーコン
-					case RequestOfWebhook.Event.EventType.Beacon:
+					case "beacon":
 						await this.ExecuteBeaconEvent(
 							channelAccessToken ,
 							eventObj.replyToken ,
@@ -246,8 +244,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteJoinEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType type ,
+			string timestamp ,
+			string type ,
 			string id
 		) {
 
@@ -273,8 +271,8 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="id">ユーザIDまたはグループID</param>
 		private void ExecuteLeaveEvent(
 			string channelAccessToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType type ,
+			string timestamp ,
+			string type ,
 			string id
 		) {
 
@@ -299,8 +297,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteTextMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			string text
@@ -331,8 +329,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteImageMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			byte[] binaryImage
@@ -363,8 +361,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteVideoMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			byte[] binaryVideo
@@ -395,8 +393,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteAudioMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			byte[] binaryAudio
@@ -429,8 +427,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteFileMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			string fileName ,
@@ -470,14 +468,14 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteLocationMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			string title ,
 			string address ,
-			double latitude ,
-			double longitude
+			string latitude ,
+			string longitude
 		) {
 
 			Trace.TraceInformation( "Location Message Event Start" );
@@ -511,8 +509,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteStickerMessageEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string messageId ,
 			string packageId ,
@@ -546,8 +544,8 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecutePostbackEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType type ,
+			string timestamp ,
+			string type ,
 			string id ,
 			string data
 		) {
@@ -581,11 +579,11 @@ namespace LineBotTemplate.Controllers {
 		private async Task ExecuteBeaconEvent(
 			string channelAccessToken ,
 			string replyToken ,
-			int timestamp ,
-			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string timestamp ,
+			string sourceType ,
 			string sourceId ,
 			string hardWareId ,
-			RequestOfWebhook.Event.Beacon.BeaconType beaconType ,
+			string beaconType ,
 			string deviceMessage
 		) {
 

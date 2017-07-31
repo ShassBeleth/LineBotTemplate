@@ -1,34 +1,30 @@
 ﻿namespace LineBotTemplate.Models.Webhook {
-	public partial class RequestOfWebhook {
-		public partial class Event {
 
-			/// <summary>
-			/// イベント送信元を表すオブジェクト
-			/// </summary>
-			public partial class Source {
-				
-				/// <summary>
-				/// 種別
-				/// </summary>
-				public SourceType type;
+	/// <summary>
+	/// イベント送信元を表すオブジェクト
+	/// </summary>
+	public class Source {
 
-				/// <summary>
-				/// ユーザID
-				/// </summary>
-				public string userId;
+		/// <summary>
+		/// 種別
+		/// </summary>
+		public string type;
 
-				/// <summary>
-				/// グループID
-				/// </summary>
-				public string groupId;
+		/// <summary>
+		/// ユーザID
+		/// </summary>
+		public string userId;
 
-				/// <summary>
-				/// ルームID
-				/// </summary>
-				public string roomId;
+		/// <summary>
+		/// グループID
+		/// </summary>
+		public string groupId;
 
-			}
+		/// <summary>
+		/// ルームID
+		/// </summary>
+		public string roomId;
 
-		}
 	}
+
 }

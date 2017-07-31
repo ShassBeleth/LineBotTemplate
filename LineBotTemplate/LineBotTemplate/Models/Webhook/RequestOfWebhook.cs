@@ -5,12 +5,12 @@ namespace LineBotTemplate.Models.Webhook {
 	/// <summary>
 	/// Webhookに使用するリクエストEntity
 	/// </summary>
-	public partial class RequestOfWebhook {
+	public class RequestOfWebhook {
 
 		/// <summary>
 		/// イベントリスト
 		/// </summary>
-		public List<Event> events;
+		public Event[] events;
 
 	}
 

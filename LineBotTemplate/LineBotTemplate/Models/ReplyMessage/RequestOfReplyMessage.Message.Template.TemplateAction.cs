@@ -1,42 +1,36 @@
 ﻿namespace LineBotTemplate.Models.ReplyMessage {
-	public partial class RequestOfReplyMessage {
-		public partial class Message {
-			public partial class Template {
 
-				/// <summary>
-				/// ボタン押下時アクション
-				/// </summary>
-				public partial class TemplateAction {
-				
-					/// <summary>
-					/// アクション種別
-					/// </summary>
-					public ActionType type;
+	/// <summary>
+	/// ボタン押下時アクション
+	/// </summary>
+	public class TemplateAction {
 
-					/// <summary>
-					/// アクションの表示名
-					/// </summary>
-					public string label;
+		/// <summary>
+		/// アクション種別
+		/// </summary>
+		public ActionType type;
 
-					/// <summary>
-					/// postback eventに渡されるデータ
-					/// </summary>
-					public string data;
+		/// <summary>
+		/// アクションの表示名
+		/// </summary>
+		public string label;
 
-					/// <summary>
-					/// アクション実行時に送信されるテキスト
-					/// </summary>
-					public string text;
+		/// <summary>
+		/// postback eventに渡されるデータ
+		/// </summary>
+		public string data;
 
-					/// <summary>
-					/// URI
-					/// </summary>
-					public string uri;
+		/// <summary>
+		/// アクション実行時に送信されるテキスト
+		/// </summary>
+		public string text;
+
+		/// <summary>
+		/// URI
+		/// </summary>
+		public string uri;
 
 
-				}
-
-			}
-		}
 	}
+
 }

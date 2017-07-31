@@ -96,6 +96,11 @@
     <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.ImageMapAction.ImageMapActionType.cs" />
     <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.ImageMapAction.ImageMapArea.cs" />
     <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.MessageType.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.Template.Column.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.Template.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.Template.TemplateAction.ActionType.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.Template.TemplateAction.cs" />
+    <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.Template.TemplateType.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Beacon.BeaconType.cs" />
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Beacon.cs" />

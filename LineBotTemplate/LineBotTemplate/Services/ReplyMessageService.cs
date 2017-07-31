@@ -47,7 +47,7 @@ namespace LineBotTemplate.Services {
 
 			this.Request = new RequestOfReplyMessage() {
 				replyToken = replyToken ,
-				messages = new RequestOfReplyMessage.Message[ 1 ]
+				messages = new Message[ 1 ]
 			};
 			this.MessagesIndex = 0;
 
@@ -78,8 +78,8 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Text ,
+			Message message = new Message() {
+				type = "text" ,
 				text = messageText
 			};
 			
@@ -118,8 +118,8 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Image ,
+			Message message = new Message() {
+				type = "image" ,
 				originalContentUrl = originalContentUrl ,
 				previewImageUrl = previewImageUrl
 			};
@@ -159,8 +159,8 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Video ,
+			Message message = new Message() {
+				type = "video" ,
 				originalContentUrl = originalContentUrl ,
 				previewImageUrl = previewImageUrl
 			};
@@ -200,8 +200,8 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Video ,
+			Message message = new Message() {
+				type = "audio" ,
 				originalContentUrl = originalContentUrl ,
 				duration = duration
 			};
@@ -247,8 +247,8 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Location ,
+			Message message = new Message() {
+				type = "location" ,
 				title = title ,
 				address = address ,
 				latitude = latitude ,
@@ -290,8 +290,8 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Sticker ,
+			Message message = new Message() {
+				type = "sticker" ,
 				packageId = packageId ,
 				stickerId = stickerId
 			};
@@ -321,7 +321,7 @@ namespace LineBotTemplate.Services {
 			string altText ,
 			int width ,
 			int height ,
-			RequestOfReplyMessage.Message.ImageMapAction[] actions
+			ImageMapAction[] actions
 		) {
 
 			Trace.TraceInformation( "Add Imagemap Message Start" );
@@ -340,11 +340,11 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Imagemap ,
+			Message message = new Message() {
+				type = "imagemap" ,
 				baseUrl = baseUrl ,
 				altText = altText ,
-				baseSize = new RequestOfReplyMessage.Message.BaseSize() {
+				baseSize = new BaseSize() {
 					width = width ,
 					height = height
 				} ,
@@ -377,7 +377,7 @@ namespace LineBotTemplate.Services {
 			string thumbnailImageUrl ,
 			string title ,
 			string text ,
-			RequestOfReplyMessage.Message.Template.TemplateAction[] actions
+			TemplateAction[] actions
 		) {
 
 			Trace.TraceInformation( "Add Button Message Start" );
@@ -396,16 +396,16 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message.Template template = new RequestOfReplyMessage.Message.Template() {
-				type = RequestOfReplyMessage.Message.Template.TemplateType.Buttons ,
+			Template template = new Template() {
+				type = "buttons" ,
 				thumbnailImageUrl = thumbnailImageUrl ,
 				title = title ,
 				text = text ,
 				actions = actions
 			};
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Template ,
+			Message message = new Message() {
+				type = "template" ,
 				altText = altText ,
 				template = template
 			};
@@ -432,7 +432,7 @@ namespace LineBotTemplate.Services {
 		public ReplyMessageService AddConfirmMessage(
 			string altText ,
 			string text ,
-			RequestOfReplyMessage.Message.Template.TemplateAction[] actions
+			TemplateAction[] actions
 		) {
 
 			Trace.TraceInformation( "Add Confirm Message Start" );
@@ -449,14 +449,14 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message.Template template = new RequestOfReplyMessage.Message.Template() {
-				type = RequestOfReplyMessage.Message.Template.TemplateType.Confirm ,
+			Template template = new Template() {
+				type = "confirm" ,
 				text = text ,
 				actions = actions
 			};
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Template ,
+			Message message = new Message() {
+				type = "template" ,
 				altText = altText ,
 				template = template
 			};
@@ -481,7 +481,7 @@ namespace LineBotTemplate.Services {
 		/// <returns>自身のオブジェクト</returns>
 		public ReplyMessageService AddCarouselMessage(
 			string altText ,
-			RequestOfReplyMessage.Message.Template.Column[] columns
+			Column[] columns
 		) {
 
 			Trace.TraceInformation( "Add Carousel Message Start" );
@@ -497,13 +497,13 @@ namespace LineBotTemplate.Services {
 			Array.Resize( ref this.Request.messages , this.MessagesIndex + 1 );
 			Trace.TraceInformation( "Messages Size is : " + this.Request.messages.Length );
 
-			RequestOfReplyMessage.Message.Template template = new RequestOfReplyMessage.Message.Template() {
-				type = RequestOfReplyMessage.Message.Template.TemplateType.Carousel ,
+			Template template = new Template() {
+				type = "carousel" ,
 				columns = columns
 			};
 
-			RequestOfReplyMessage.Message message = new RequestOfReplyMessage.Message() {
-				type = RequestOfReplyMessage.Message.MessageType.Template ,
+			Message message = new Message() {
+				type = "template" ,
 				altText = altText ,
 				template = template
 			};
