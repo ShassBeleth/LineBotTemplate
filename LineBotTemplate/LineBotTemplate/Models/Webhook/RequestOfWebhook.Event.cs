@@ -9,7 +9,7 @@
 			/// <summary>
 			/// イベント種別
 			/// </summary>
-			public string type;
+			public EventType type;
 
 			/// <summary>
 			/// リプライトークン

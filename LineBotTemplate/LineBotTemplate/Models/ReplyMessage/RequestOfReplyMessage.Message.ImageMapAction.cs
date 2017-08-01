@@ -10,7 +10,7 @@
 				/// <summary>
 				/// アクション種別
 				/// </summary>
-				public string type;
+				public ImageMapActionType type;
 
 				/// <summary>
 				/// WebページのURL

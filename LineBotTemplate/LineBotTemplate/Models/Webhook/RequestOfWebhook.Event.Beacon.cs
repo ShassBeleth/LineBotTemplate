@@ -15,7 +15,7 @@
 				/// <summary>
 				/// 種別
 				/// </summary>
-				public string type;
+				public BeaconType type;
 
 				/// <summary>
 				/// 発見したビーコンデバイスのデバイスメッセージ

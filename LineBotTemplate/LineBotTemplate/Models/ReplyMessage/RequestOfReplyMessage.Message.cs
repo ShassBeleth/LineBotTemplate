@@ -9,7 +9,7 @@
 			/// <summary>
 			/// メッセージ種別
 			/// </summary>
-			public string type;
+			public MessageType type;
 
 			/// <summary>
 			/// メッセージ本文

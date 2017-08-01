@@ -10,7 +10,7 @@
 				/// <summary>
 				/// 種別
 				/// </summary>
-				public string type;
+				public SourceType type;
 
 				/// <summary>
 				/// ユーザID

@@ -10,7 +10,7 @@
 				/// <summary>
 				/// テンプレート種別
 				/// </summary>
-				public string type;
+				public TemplateType type;
 
 				/// <summary>
 				/// 画像のURL
