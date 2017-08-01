@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Reply Messageに使用するリクエストEntity
 	/// </summary>
-	public class RequestOfReplyMessage {
+	public partial class RequestOfReplyMessage {
 
 		/// <summary>
 		/// 返信に必要なリプライトークン

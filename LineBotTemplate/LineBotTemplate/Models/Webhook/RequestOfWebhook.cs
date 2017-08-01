@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace LineBotTemplate.Models.Webhook {
+﻿namespace LineBotTemplate.Models.Webhook {
 
 	/// <summary>
 	/// Webhookに使用するリクエストEntity
 	/// </summary>
-	public class RequestOfWebhook {
+	public partial class RequestOfWebhook {
 
 		/// <summary>
 		/// イベントリスト

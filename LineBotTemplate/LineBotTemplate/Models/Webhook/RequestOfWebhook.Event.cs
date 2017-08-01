@@ -1,45 +1,47 @@
 ﻿namespace LineBotTemplate.Models.Webhook {
-
-	/// <summary>
-	/// イベント情報
-	/// </summary>
-	public class Event {
+	public partial class RequestOfWebhook {
 
 		/// <summary>
-		/// イベント種別
+		/// イベント情報
 		/// </summary>
-		public string type;
+		public partial class Event {
 
-		/// <summary>
-		/// リプライトークン
-		/// </summary>
-		public string replyToken;
+			/// <summary>
+			/// イベント種別
+			/// </summary>
+			public string type;
 
-		/// <summary>
-		/// Webhook受信日時
-		/// </summary>
-		public string timestamp;
+			/// <summary>
+			/// リプライトークン
+			/// </summary>
+			public string replyToken;
 
-		/// <summary>
-		/// ポストバック
-		/// </summary>
-		public Postback postback;
+			/// <summary>
+			/// Webhook受信日時
+			/// </summary>
+			public string timestamp;
 
-		/// <summary>
-		/// イベント送信元を表すオブジェクト
-		/// </summary>
-		public Source source;
+			/// <summary>
+			/// ポストバック
+			/// </summary>
+			public Postback postback;
 
-		/// <summary>
-		/// メッセージ
-		/// </summary>
-		public Message message;
+			/// <summary>
+			/// イベント送信元を表すオブジェクト
+			/// </summary>
+			public Source source;
 
-		/// <summary>
-		/// ビーコン情報
-		/// </summary>
-		public Beacon beacon;
+			/// <summary>
+			/// メッセージ
+			/// </summary>
+			public Message message;
+
+			/// <summary>
+			/// ビーコン情報
+			/// </summary>
+			public Beacon beacon;
+
+		}
 
 	}
-
 }

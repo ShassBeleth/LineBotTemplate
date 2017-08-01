@@ -30,7 +30,7 @@ namespace LineBotTemplate.Controllers {
 			// TODO チャンネルアクセストークンの取得
 			string channelAccessToken = "";
 
-			foreach( Event eventObj in request.events ) {
+			foreach( RequestOfWebhook.Event eventObj in request.events ) {
 
 				// 送信元IDの取得
 				string sourceId

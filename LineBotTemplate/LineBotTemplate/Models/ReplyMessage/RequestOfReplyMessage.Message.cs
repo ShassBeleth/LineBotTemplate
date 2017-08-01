@@ -1,90 +1,92 @@
 ﻿namespace LineBotTemplate.Models.ReplyMessage {
-
-	/// <summary>
-	/// リプライメッセージ
-	/// </summary>
-	public class Message {
+	public partial class RequestOfReplyMessage {
 
 		/// <summary>
-		/// メッセージ種別
+		/// リプライメッセージ
 		/// </summary>
-		public string type;
+		public partial class Message {
 
-		/// <summary>
-		/// メッセージ本文
-		/// </summary>
-		public string text;
+			/// <summary>
+			/// メッセージ種別
+			/// </summary>
+			public string type;
 
-		/// <summary>
-		/// 画像、動画、音声のURL
-		/// </summary>
-		public string originalContentUrl;
+			/// <summary>
+			/// メッセージ本文
+			/// </summary>
+			public string text;
 
-		/// <summary>
-		/// プレビュー画像のURL
-		/// </summary>
-		public string previewImageUrl;
+			/// <summary>
+			/// 画像、動画、音声のURL
+			/// </summary>
+			public string originalContentUrl;
 
-		/// <summary>
-		/// 音声ファイルの時間の長さ
-		/// </summary>
-		public int? duration;
+			/// <summary>
+			/// プレビュー画像のURL
+			/// </summary>
+			public string previewImageUrl;
 
-		/// <summary>
-		/// タイトル
-		/// </summary>
-		public string title;
+			/// <summary>
+			/// 音声ファイルの時間の長さ
+			/// </summary>
+			public int? duration;
 
-		/// <summary>
-		/// 住所
-		/// </summary>
-		public string address;
+			/// <summary>
+			/// タイトル
+			/// </summary>
+			public string title;
 
-		/// <summary>
-		/// 緯度
-		/// </summary>
-		public double? latitude;
+			/// <summary>
+			/// 住所
+			/// </summary>
+			public string address;
 
-		/// <summary>
-		/// 経度
-		/// </summary>
-		public double? longitude;
+			/// <summary>
+			/// 緯度
+			/// </summary>
+			public double? latitude;
 
-		/// <summary>
-		/// パッケージ識別子
-		/// </summary>
-		public string packageId;
+			/// <summary>
+			/// 経度
+			/// </summary>
+			public double? longitude;
 
-		/// <summary>
-		/// Sticker識別子
-		/// </summary>
-		public string stickerId;
+			/// <summary>
+			/// パッケージ識別子
+			/// </summary>
+			public string packageId;
 
-		/// <summary>
-		/// imagemapに使用する画像のURL
-		/// </summary>
-		public string baseUrl;
+			/// <summary>
+			/// Sticker識別子
+			/// </summary>
+			public string stickerId;
 
-		/// <summary>
-		/// 代替テキスト
-		/// </summary>
-		public string altText;
+			/// <summary>
+			/// imagemapに使用する画像のURL
+			/// </summary>
+			public string baseUrl;
 
-		/// <summary>
-		/// 基本比率サイズ
-		/// </summary>
-		public BaseSize baseSize;
+			/// <summary>
+			/// 代替テキスト
+			/// </summary>
+			public string altText;
 
-		/// <summary>
-		/// imagemapタップ時のアクション
-		/// </summary>
-		public ImageMapAction[] actions;
+			/// <summary>
+			/// 基本比率サイズ
+			/// </summary>
+			public BaseSize baseSize;
 
-		/// <summary>
-		/// テンプレートオブジェクト
-		/// </summary>
-		public Template template;
+			/// <summary>
+			/// imagemapタップ時のアクション
+			/// </summary>
+			public ImageMapAction[] actions;
+
+			/// <summary>
+			/// テンプレートオブジェクト
+			/// </summary>
+			public Template template;
+
+		}
 
 	}
-
 }
