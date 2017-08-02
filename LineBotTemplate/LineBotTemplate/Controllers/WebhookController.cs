@@ -28,7 +28,7 @@ namespace LineBotTemplate.Controllers {
 			RequestOfWebhook request = requestToken.ToObject<RequestOfWebhook>();
 
 			// TODO チャンネルアクセストークンの取得
-			string channelAccessToken = "";
+			string channelAccessToken = this.GetChannelAccessToken();
 
 			foreach( RequestOfWebhook.Event eventObj in request.events ) {
 
@@ -42,8 +42,7 @@ namespace LineBotTemplate.Controllers {
 					Trace.TraceError( "Source Id Not Found" );
 					break;
 				}
-
-
+				
 				switch( eventObj.type ) {
 
 					// 友達追加またはブロック解除
@@ -233,6 +232,21 @@ namespace LineBotTemplate.Controllers {
 		}
 
 		/// <summary>
+		/// チャンネルアクセストークンの取得
+		/// </summary>
+		/// <returns>チャンネルアクセストークン</returns>
+		private string GetChannelAccessToken() {
+
+			string token = "";
+
+			// TODO ここに実装方法を記述
+			// 例：app.configから取得　定数クラスから取得等
+
+			return token;
+
+		}
+
+		/// <summary>
 		/// 追加時イベント
 		/// 友達登録、ブロック解除時、グループ追加時、トークルーム追加時
 		/// </summary>
@@ -251,7 +265,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Join Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "追加されました" )
 				.Send();
@@ -278,7 +292,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Leave Event Start" );
 			
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 
 			Trace.TraceInformation( "Leave Event End" );
 
@@ -306,7 +320,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Text Message Event Start" );
 			
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "テキスト" )
 				.AddTextMessage( text )
@@ -338,7 +352,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Image Message Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "画像" )
 				.AddTextMessage( "バイナリサイズ : " + binaryImage.Length )
@@ -370,7 +384,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Video Message Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "動画" )
 				.AddTextMessage( "バイナリサイズ : " + binaryVideo.Length )
@@ -402,7 +416,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Audio Message Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "音声" )
 				.AddTextMessage( "バイナリサイズ : " + binaryAudio.Length )
@@ -438,7 +452,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "File Message Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "ファイル" )
 				.AddTextMessage( 
@@ -480,7 +494,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Location Message Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "位置情報" )
 				.AddTextMessage( 
@@ -519,7 +533,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Sticker Message Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "Sticker" )
 				.AddTextMessage(
@@ -552,7 +566,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Postback Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "ポストバック" )
 				.AddTextMessage(
@@ -589,7 +603,7 @@ namespace LineBotTemplate.Controllers {
 
 			Trace.TraceInformation( "Beacon Event Start" );
 
-			// ここにイベント内容を記載
+			// TODO ここにイベント内容を記載
 			await new ReplyMessageService( replyToken , channelAccessToken )
 				.AddTextMessage( "ビーコン" )
 				.AddTextMessage(
