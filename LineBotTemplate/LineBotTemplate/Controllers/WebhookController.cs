@@ -6,6 +6,7 @@ using System.Web.Http;
 using Newtonsoft.Json.Linq;
 using LineBotTemplate.Models.Webhook;
 using LineBotTemplate.Services;
+using LineBotTemplate.Models.Profile;
 
 namespace LineBotTemplate.Controllers {
 
@@ -85,7 +86,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									eventObj.message.text
 								);
 								break;
@@ -98,7 +98,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 								break;
@@ -111,7 +110,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 								break;
@@ -124,7 +122,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
 								);
 
@@ -138,7 +135,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									eventObj.message.fileName ,
 									eventObj.message.fileSize ,
 									await new ContentService().GetContent( eventObj.message.id , channelAccessToken )
@@ -159,7 +155,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									eventObj.message.title ,
 									eventObj.message.address ,
 									eventObj.message.latitude ,
@@ -175,7 +170,6 @@ namespace LineBotTemplate.Controllers {
 									eventObj.timestamp ,
 									eventObj.source.type ,
 									sourceId ,
-									eventObj.message.id ,
 									eventObj.message.packageId ,
 									eventObj.message.stickerId
 								);
@@ -237,7 +231,7 @@ namespace LineBotTemplate.Controllers {
 		/// <returns>チャンネルアクセストークン</returns>
 		private string GetChannelAccessToken() {
 
-			string token = "";
+			string token = "FMEYNCzDFwMSzMErx5VMh6xeePaZR7n+zQ3NJckfElYFsoULEytM6DFqrVyIbtUXrrVaFYOZVkm0PCZ7ENeyq2ai7wt7nIfcIFmiEXHF+5UrLyrm10McfYYFf30bknRV1I0uIpKPhxj9RRYHG1Y2AgdB04t89/1O/w1cDnyilFU=";
 
 			// TODO ここに実装方法を記述
 			// 例：app.configから取得　定数クラスから取得等
@@ -253,24 +247,27 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
 		/// <param name="replyToken">リプライトークン</param>
 		/// <param name="timestamp">Webhook受信日時</param>
-		/// <param name="type">イベント送信元種別</param>
-		/// <param name="id">イベント送信元ID</param>
+		/// <param name="sourceType">イベント送信元種別</param>
+		/// <param name="sourceId">イベント送信元ID</param>
 		private async Task ExecuteJoinEvent(
 			string channelAccessToken ,
 			string replyToken ,
 			string timestamp ,
-			RequestOfWebhook.Event.Source.SourceType type ,
-			string id
+			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string sourceId
 		) {
 
 			Trace.TraceInformation( "Join Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "追加されました" )
-				.Send();
-
-
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( channelAccessToken , replyToken , "追加されました" );
+			
 			Trace.TraceInformation( "Join Event End" );
 
 		}
@@ -281,17 +278,21 @@ namespace LineBotTemplate.Controllers {
 		/// </summary>
 		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
 		/// <param name="timestamp">Webhook受信日時</param>
-		/// <param name="type">イベント送信元種別</param>
-		/// <param name="id">ユーザIDまたはグループID</param>
+		/// <param name="sourceType">イベント送信元種別</param>
+		/// <param name="sourceId">ユーザIDまたはグループID</param>
 		private void ExecuteLeaveEvent(
 			string channelAccessToken ,
 			string timestamp ,
-			RequestOfWebhook.Event.Source.SourceType type ,
-			string id
+			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string sourceId
 		) {
 
 			Trace.TraceInformation( "Leave Event Start" );
-			
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+
 			// TODO ここにイベント内容を記載
 
 			Trace.TraceInformation( "Leave Event End" );
@@ -306,7 +307,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="text">テキスト</param>
 		private async Task ExecuteTextMessageEvent(
 			string channelAccessToken ,
@@ -314,17 +314,20 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			string text
 		) {
 
 			Trace.TraceInformation( "Text Message Event Start" );
-			
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Text is : " + text );
+
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "テキスト" )
-				.AddTextMessage( text )
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "テキスト\n" + text );
 
 			Trace.TraceInformation( "Text Message Event End" );
 
@@ -338,7 +341,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="binaryImage">バイナリ画像</param>
 		private async Task ExecuteImageMessageEvent(
 			string channelAccessToken ,
@@ -346,17 +348,20 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			byte[] binaryImage
 		) {
 
 			Trace.TraceInformation( "Image Message Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Binary Image Length is : " + binaryImage.Length );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "画像" )
-				.AddTextMessage( "バイナリサイズ : " + binaryImage.Length )
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "画像" );
 
 			Trace.TraceInformation( "Image Message Event End" );
 
@@ -370,7 +375,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="binaryVideo">バイナリ動画</param>
 		private async Task ExecuteVideoMessageEvent(
 			string channelAccessToken ,
@@ -378,17 +382,20 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			byte[] binaryVideo
 		) {
 
 			Trace.TraceInformation( "Video Message Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Binary Video Length is : " + binaryVideo.Length );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "動画" )
-				.AddTextMessage( "バイナリサイズ : " + binaryVideo.Length )
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "動画" );
 
 			Trace.TraceInformation( "Video Message Event End" );
 
@@ -402,7 +409,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="binaryAudio">バイナリ音声</param>
 		private async Task ExecuteAudioMessageEvent(
 			string channelAccessToken ,
@@ -410,17 +416,20 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			byte[] binaryAudio
 		) {
 
 			Trace.TraceInformation( "Audio Message Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Binary Audio Length is : " + binaryAudio.Length );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "音声" )
-				.AddTextMessage( "バイナリサイズ : " + binaryAudio.Length )
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "音声" );
 
 			Trace.TraceInformation( "Audio Message Event End" );
 
@@ -434,7 +443,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="fileName">ファイル名</param>
 		/// <param name="fileSize">ファイルのバイト数</param>
 		/// <param name="binaryFile">バイナリファイル</param>
@@ -444,23 +452,30 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			string fileName ,
 			string fileSize ,
 			byte[] binaryFile
 		) {
 
 			Trace.TraceInformation( "File Message Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "File Name Id is : " + fileName );
+			Trace.TraceInformation( "File Size Id is : " + fileSize );
+			Trace.TraceInformation( "Binary File Length is : " + binaryFile.Length );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "ファイル" )
-				.AddTextMessage( 
-					"ファイル名 : " + fileName + "\n" +
-					"ファイルサイズ : " + fileSize + "\n" +
-					"バイナリサイズ : " + binaryFile.Length 
-				)
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( 
+				replyToken , 
+				channelAccessToken , 
+				"ファイル\n" +
+				"ファイル名:" + fileName + "\n" +
+				"ファイルサイズ:" + fileSize
+			);
 
 			Trace.TraceInformation( "File Message Event End" );
 
@@ -474,7 +489,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="title">タイトル</param>
 		/// <param name="address">住所</param>
 		/// <param name="latitude">緯度</param>
@@ -485,7 +499,6 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			string title ,
 			string address ,
 			string latitude ,
@@ -493,17 +506,27 @@ namespace LineBotTemplate.Controllers {
 		) {
 
 			Trace.TraceInformation( "Location Message Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Title is : " + title );
+			Trace.TraceInformation( "Address is : " + address );
+			Trace.TraceInformation( "Latitude is : " + latitude );
+			Trace.TraceInformation( "Longitude is : " + longitude );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "位置情報" )
-				.AddTextMessage( 
-					"タイトル : " + title + "\n" +
-					"アドレス : " + address + "\n" +
-					"緯度 : " + latitude + "\n" +
-					"経度 : " + longitude
-				)
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( 
+				replyToken , 
+				channelAccessToken , 
+				"位置情報\n" +  
+				"タイトル:" + title +
+				"住所:" + address +
+				"緯度:" + latitude + 
+				"経度:" + longitude
+			);
 
 			Trace.TraceInformation( "Location Message Event End" );
 
@@ -517,7 +540,6 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
 		/// <param name="sourceId">イベント送信元ID</param>
-		/// <param name="messageId">メッセージ識別子</param>
 		/// <param name="packageId">パッケージ識別子</param>
 		/// <param name="stickerId">Sticker識別子</param>
 		private async Task ExecuteStickerMessageEvent(
@@ -526,21 +548,28 @@ namespace LineBotTemplate.Controllers {
 			string timestamp ,
 			RequestOfWebhook.Event.Source.SourceType sourceType ,
 			string sourceId ,
-			string messageId ,
 			string packageId ,
 			string stickerId
 		) {
 
 			Trace.TraceInformation( "Sticker Message Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Package Id is : " + packageId );
+			Trace.TraceInformation( "Sticker Id is : " + stickerId );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "Sticker" )
-				.AddTextMessage(
-					"パッケージ識別子 : " + packageId + "\n" +
-					"Sticker識別子 : " + stickerId
-				)
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( 
+				replyToken , 
+				channelAccessToken , 
+				"Sticker\n" +
+				"パッケージ:" + packageId +
+				"Sticker:" + stickerId
+			);
 
 			Trace.TraceInformation( "Sticker Message Event End" );
 
@@ -552,28 +581,29 @@ namespace LineBotTemplate.Controllers {
 		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
 		/// <param name="replyToken">リプライトークン</param>
 		/// <param name="timestamp">Webhook受信日時</param>
-		/// <param name="type">イベント送信元種別</param>
-		/// <param name="id">ユーザIDまたはグループIDまたはトークルームID</param>
+		/// <param name="sourceI">イベント送信元種別</param>
+		/// <param name="sourceId">ユーザIDまたはグループIDまたはトークルームID</param>
 		/// <param name="data">ポストバックデータ</param>
 		private async Task ExecutePostbackEvent(
 			string channelAccessToken ,
 			string replyToken ,
 			string timestamp ,
-			RequestOfWebhook.Event.Source.SourceType type ,
-			string id ,
+			RequestOfWebhook.Event.Source.SourceType sourceType ,
+			string sourceId ,
 			string data
 		) {
 
 			Trace.TraceInformation( "Postback Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Data is : " + data );
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "ポストバック" )
-				.AddTextMessage(
-					"データ : " + data
-				)
-				.Send();
-
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "ポストバック\n" + data );
 
 			Trace.TraceInformation( "Postback Event End" );
 
@@ -602,18 +632,68 @@ namespace LineBotTemplate.Controllers {
 		) {
 
 			Trace.TraceInformation( "Beacon Event Start" );
+			Trace.TraceInformation( "Channel Access Token is : " + channelAccessToken );
+			Trace.TraceInformation( "Reply Token is : " + replyToken );
+			Trace.TraceInformation( "Timestamp is : " + timestamp );
+			Trace.TraceInformation( "Source Type is : " + sourceType );
+			Trace.TraceInformation( "Source Id is : " + sourceId );
+			Trace.TraceInformation( "Hard Ware Id is : " + hardWareId );
+			Trace.TraceInformation( "Beacon Type is : " + beaconType );
+			Trace.TraceInformation( "Device Message is : " + deviceMessage );
+
 
 			// TODO ここにイベント内容を記載
-			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( "ビーコン" )
-				.AddTextMessage(
-					"ハードウェア識別子 : " + hardWareId + "\n" +
-					"ビーコン種別 : " + beaconType + "\n" +
-					"デバイスメッセージ : " + deviceMessage
-				)
-				.Send();
+			// 以下サンプル
+			await this.ReplyTextMessageSampleEvent( 
+				replyToken , 
+				channelAccessToken , 
+				"ビーコン\n" +
+				"ハードウェア:" + hardWareId + "\n" +
+				"種別:" + beaconType + "\n" +
+				"デバイスメッセージ" + deviceMessage
+			);
 
 			Trace.TraceInformation( "Beacon Event End" );
+
+		}
+
+		/// <summary>
+		/// テキストサンプル
+		/// </summary>
+		/// <param name="replyToken">リプライトークン</param>
+		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
+		/// <param name="text">テキスト</param>
+		/// <returns></returns>
+		private async Task ReplyTextMessageSampleEvent(
+			string replyToken ,
+			string channelAccessToken ,
+			string text
+		) => await new ReplyMessageService( replyToken , channelAccessToken )
+				.AddTextMessage( text )
+				.Send();
+
+		/// <summary>
+		/// プロフィールを表示するサンプル
+		/// </summary>
+		/// <param name="replyToken">リプライトークン</param>
+		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
+		/// <param name="userId">ユーザID</param>
+		/// <returns></returns>
+		private async Task ReplyProfileMessageSampleEvent(
+			string replyToken ,
+			string channelAccessToken ,
+			string userId
+		) {
+
+			ResponseOfProfile profile = await new ProfileService().GetProfile( userId , channelAccessToken );
+
+			await new ReplyMessageService( replyToken , channelAccessToken )
+				.AddTextMessage( 
+					"プロフィール\n" +
+					"表示名：" + profile.displayName + "\n" +
+					"ステータスメッセージ：" + profile.statusMessage
+				)
+				.Send();
 
 		}
 

@@ -114,7 +114,11 @@
     <Compile Include="Models\Webhook\RequestOfWebhook.Event.Source.SourceType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ContentService.cs" />
+    <Compile Include="Services\ProfileService.cs" />
+    <Compile Include="Services\ReplyMessageService.ActionCreator.cs" />
+    <Compile Include="Services\ReplyMessageService.ColumnCreator.cs" />
     <Compile Include="Services\ReplyMessageService.cs" />
+    <Compile Include="Services\ReplyMessageService.ImagemapActionCreator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
