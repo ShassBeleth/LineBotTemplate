@@ -90,6 +90,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Profile\RequestOfProfile.cs" />
     <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.cs" />
     <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.BaseSize.cs" />
     <Compile Include="Models\ReplyMessage\RequestOfReplyMessage.Message.cs" />

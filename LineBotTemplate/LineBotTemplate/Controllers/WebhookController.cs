@@ -43,7 +43,7 @@ namespace LineBotTemplate.Controllers {
 					Trace.TraceError( "Source Id Not Found" );
 					break;
 				}
-				
+
 				switch( eventObj.type ) {
 
 					// 友達追加またはブロック解除
@@ -231,7 +231,7 @@ namespace LineBotTemplate.Controllers {
 		/// <returns>チャンネルアクセストークン</returns>
 		private string GetChannelAccessToken() {
 
-			string token = "FMEYNCzDFwMSzMErx5VMh6xeePaZR7n+zQ3NJckfElYFsoULEytM6DFqrVyIbtUXrrVaFYOZVkm0PCZ7ENeyq2ai7wt7nIfcIFmiEXHF+5UrLyrm10McfYYFf30bknRV1I0uIpKPhxj9RRYHG1Y2AgdB04t89/1O/w1cDnyilFU=";
+			string token = "";
 
 			// TODO ここに実装方法を記述
 			// 例：app.configから取得　定数クラスから取得等
@@ -267,7 +267,7 @@ namespace LineBotTemplate.Controllers {
 			// TODO ここにイベント内容を記載
 			// 以下サンプル
 			await this.ReplyTextMessageSampleEvent( channelAccessToken , replyToken , "追加されました" );
-			
+
 			Trace.TraceInformation( "Join Event End" );
 
 		}
@@ -302,7 +302,7 @@ namespace LineBotTemplate.Controllers {
 		/// <summary>
 		/// テキストメッセージイベント
 		/// </summary>
- 		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
+		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
 		/// <param name="replyToken">リプライトークン</param>
 		/// <param name="timestamp">Webhook受信日時</param>
 		/// <param name="sourceType">イベント送信元種別</param>
@@ -327,7 +327,29 @@ namespace LineBotTemplate.Controllers {
 
 			// TODO ここにイベント内容を記載
 			// 以下サンプル
-			await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "テキスト\n" + text );
+			switch( text ) {
+
+				case "プロフィール":
+					await this.ReplyProfileMessageSampleEvent( replyToken , channelAccessToken , sourceId );
+					break;
+
+				case "カンファーム":
+					await this.ReplyConfirmMessageSampleEvent( replyToken , channelAccessToken );
+					break;
+
+				case "ボタン":
+					await this.ReplyButtonMessageSampleEvent( replyToken , channelAccessToken );
+					break;
+
+				case "カルーセル":
+					await this.ReplyCarouselMessageSampleEvent( replyToken , channelAccessToken );
+					break;
+
+				default:
+					await this.ReplyTextMessageSampleEvent( replyToken , channelAccessToken , "テキスト\n" + text );
+					break;
+
+			}
 
 			Trace.TraceInformation( "Text Message Event End" );
 
@@ -469,9 +491,9 @@ namespace LineBotTemplate.Controllers {
 
 			// TODO ここにイベント内容を記載
 			// 以下サンプル
-			await this.ReplyTextMessageSampleEvent( 
-				replyToken , 
-				channelAccessToken , 
+			await this.ReplyTextMessageSampleEvent(
+				replyToken ,
+				channelAccessToken ,
 				"ファイル\n" +
 				"ファイル名:" + fileName + "\n" +
 				"ファイルサイズ:" + fileSize
@@ -518,13 +540,13 @@ namespace LineBotTemplate.Controllers {
 
 			// TODO ここにイベント内容を記載
 			// 以下サンプル
-			await this.ReplyTextMessageSampleEvent( 
-				replyToken , 
-				channelAccessToken , 
-				"位置情報\n" +  
+			await this.ReplyTextMessageSampleEvent(
+				replyToken ,
+				channelAccessToken ,
+				"位置情報\n" +
 				"タイトル:" + title +
 				"住所:" + address +
-				"緯度:" + latitude + 
+				"緯度:" + latitude +
 				"経度:" + longitude
 			);
 
@@ -563,9 +585,9 @@ namespace LineBotTemplate.Controllers {
 
 			// TODO ここにイベント内容を記載
 			// 以下サンプル
-			await this.ReplyTextMessageSampleEvent( 
-				replyToken , 
-				channelAccessToken , 
+			await this.ReplyTextMessageSampleEvent(
+				replyToken ,
+				channelAccessToken ,
 				"Sticker\n" +
 				"パッケージ:" + packageId +
 				"Sticker:" + stickerId
@@ -644,9 +666,9 @@ namespace LineBotTemplate.Controllers {
 
 			// TODO ここにイベント内容を記載
 			// 以下サンプル
-			await this.ReplyTextMessageSampleEvent( 
-				replyToken , 
-				channelAccessToken , 
+			await this.ReplyTextMessageSampleEvent(
+				replyToken ,
+				channelAccessToken ,
 				"ビーコン\n" +
 				"ハードウェア:" + hardWareId + "\n" +
 				"種別:" + beaconType + "\n" +
@@ -688,7 +710,7 @@ namespace LineBotTemplate.Controllers {
 			ResponseOfProfile profile = await new ProfileService().GetProfile( userId , channelAccessToken );
 
 			await new ReplyMessageService( replyToken , channelAccessToken )
-				.AddTextMessage( 
+				.AddTextMessage(
 					"プロフィール\n" +
 					"表示名：" + profile.displayName + "\n" +
 					"ステータスメッセージ：" + profile.statusMessage
@@ -696,6 +718,89 @@ namespace LineBotTemplate.Controllers {
 				.Send();
 
 		}
+
+		/// <summary>
+		/// Confirmを表示するサンプル
+		/// </summary>
+		/// <param name="replyToken">リプライトークン</param>
+		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
+		/// <returns></returns>
+		private async Task ReplyConfirmMessageSampleEvent(
+			string replyToken ,
+			string channelAccessToken
+		) => await new ReplyMessageService( replyToken , channelAccessToken )
+				.AddConfirmMessage(
+					"代替テキスト" ,
+					"メッセージ" ,
+					new ReplyMessageService.ActionCreator()
+						.CreateAction( Models.ReplyMessage.RequestOfReplyMessage.Message.Template.TemplateType.Confirm )
+						.AddMessageAction( "メッセージ" , "ただメッセージ送るだけ" )
+						.AddPostbackAction( "ポストバック" , "データ" , "ポストバック送信" )
+						.GetActions()
+				)
+				.Send();
+
+		/// <summary>
+		/// Buttonを表示するサンプル
+		/// </summary>
+		/// <param name="replyToken">リプライトークン</param>
+		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
+		/// <returns></returns>
+		private async Task ReplyButtonMessageSampleEvent(
+			string replyToken ,
+			string channelAccessToken
+		) => await new ReplyMessageService( replyToken , channelAccessToken )
+				.AddButtonsMessage(
+					"代替テキスト" ,
+					"https://www.j-cast.com/assets_c/2016/09/news_20160926195911-thumb-autox380-94951.png" ,
+					"タイトル" ,
+					"メッセージ" ,
+					new ReplyMessageService.ActionCreator()
+						.CreateAction( Models.ReplyMessage.RequestOfReplyMessage.Message.Template.TemplateType.Buttons )
+						.AddMessageAction( "メッセージ１" , "メッセージ！" )
+						.AddMessageAction( "メッセージ２" , "メッセージ！！" )
+						.AddMessageAction( "メッセージ３" , "メッセージ！！！" )
+						.GetActions()
+				)
+				.Send();
+
+		/// <summary>
+		/// カルーセルを表示するサンプル
+		/// </summary>
+		/// <param name="replyToken">リプライトークン</param>
+		/// <param name="channelAccessToken">チャンネルアクセストークン</param>
+		/// <returns></returns>
+		private async Task ReplyCarouselMessageSampleEvent(
+			string replyToken ,
+			string channelAccessToken
+		) => await new ReplyMessageService( replyToken , channelAccessToken )
+				.AddCarouselMessage(
+					"代替テキスト" ,
+					new ReplyMessageService.ColumnCreator()
+						.CreateColumn()
+						.AddColumn(
+							"https://cdn-ak.f.st-hatena.com/images/fotolife/k/konayuki358/20160903/20160903081936.png" ,
+							"タイトル１" ,
+							"テキスト１" ,
+							new ReplyMessageService.ActionCreator()
+								.CreateAction( Models.ReplyMessage.RequestOfReplyMessage.Message.Template.TemplateType.Carousel )
+								.AddMessageAction( "テキスト" , "テキスト！" )
+								.AddPostbackAction( "ポストバック" , "データ" , "テキスト！" )
+								.GetActions()
+						)
+						.AddColumn(
+							"https://static.curazy.com/wp-content/uploads/2016/09/29111206_hidoi_reply.png" ,
+							"タイトル２" ,
+							"テキスト２" ,
+							new ReplyMessageService.ActionCreator()
+								.CreateAction( Models.ReplyMessage.RequestOfReplyMessage.Message.Template.TemplateType.Carousel )
+								.AddMessageAction( "テキスト２" , "テキスト！！" )
+								.AddPostbackAction( "ポストバック２" , "データ２" , "テキスト！！！" )
+								.GetActions()
+						)
+						.GetColumns()
+				)
+				.Send();
 
 	}
 
